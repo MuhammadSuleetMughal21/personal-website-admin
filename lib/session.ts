@@ -8,6 +8,15 @@ import { createHmac, timingSafeEqual } from "node:crypto";
 export const SESSION_COOKIE = "admin_session";
 export const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 days
 
+/** Names any missing server settings that make sign-in impossible, or null when ready. */
+export function authConfigError(): string | null {
+  const missing: string[] = [];
+  if (!process.env.ADMIN_PASSWORD) missing.push("ADMIN_PASSWORD");
+  const s = process.env.SESSION_SECRET;
+  if (!s || s.length < 16) missing.push("SESSION_SECRET (16+ characters)");
+  return missing.length ? `Sign-in isn't set up on the server. Missing: ${missing.join(", ")}.` : null;
+}
+
 function secret() {
   const s = process.env.SESSION_SECRET;
   if (!s || s.length < 16) {

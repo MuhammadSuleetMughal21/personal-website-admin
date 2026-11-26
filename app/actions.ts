@@ -8,6 +8,7 @@ import { COLLECTION_KEYS } from "@/lib/schema";
 import {
   SESSION_COOKIE,
   SESSION_TTL_MS,
+  authConfigError,
   checkPassword,
   createSessionToken,
   verifySessionToken,
@@ -27,6 +28,11 @@ const failures = { count: 0, until: 0 };
 export type LoginState = { error?: string };
 
 export async function login(_prev: LoginState, formData: FormData): Promise<LoginState> {
+  const configError = authConfigError();
+  if (configError) {
+    console.error(`[admin login] ${configError}`);
+    return { error: configError };
+  }
   const now = Date.now();
   if (now < failures.until) {
     return { error: "Too many attempts. Try again in a minute." };
