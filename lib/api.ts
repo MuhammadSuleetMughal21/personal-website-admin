@@ -1,9 +1,10 @@
 import "server-only";
 import { connection } from "next/server";
+import { PUBLIC_SITE_URL } from "./site";
 import type { Message, SiteContent } from "./types";
 
 /** Server-side client for the public site's admin API. The key never reaches the browser. */
-const SITE_URL = (process.env.SITE_URL ?? "http://localhost:3000").replace(/\/$/, "");
+const SITE_URL = (process.env.SITE_URL || PUBLIC_SITE_URL).replace(/\/$/, "");
 
 export class SiteApiError extends Error {}
 

@@ -1,13 +1,14 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { motion } from "motion/react";
-import { Lock } from "lucide-react";
+import { Eye, EyeOff, Lock } from "lucide-react";
 import { login, type LoginState } from "@/app/actions";
 import { PUBLIC_SITE_URL } from "@/lib/site";
 
 export default function LoginForm() {
   const [state, action, pending] = useActionState<LoginState, FormData>(login, {});
+  const [showPassword, setShowPassword] = useState(false);
 
   return (
     <motion.form
@@ -25,15 +26,30 @@ export default function LoginForm() {
       <label className="mt-8 block text-xs font-medium uppercase tracking-wider text-zinc-400" htmlFor="password">
         Password
       </label>
-      <input
-        id="password"
-        name="password"
-        type="password"
-        required
-        autoFocus
-        autoComplete="current-password"
-        className="mt-2 w-full rounded-xl border border-white/10 bg-black/40 px-4 py-3 outline-none transition focus:border-accent"
-      />
+      <div className="relative mt-2">
+        <input
+          id="password"
+          name="password"
+          type={showPassword ? "text" : "password"}
+          required
+          autoFocus
+          autoComplete="current-password"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          className="w-full rounded-xl border border-white/10 bg-black/40 py-3 pl-4 pr-12 outline-none transition focus:border-accent"
+        />
+        <button
+          type="button"
+          onClick={() => setShowPassword((v) => !v)}
+          aria-label={showPassword ? "Hide password" : "Show password"}
+          aria-pressed={showPassword}
+          aria-controls="password"
+          className="absolute inset-y-0 right-0 grid w-12 place-items-center rounded-r-xl text-zinc-400 transition hover:text-zinc-100 focus-visible:text-accent focus-visible:outline-none"
+        >
+          {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+        </button>
+      </div>
       {state.error && (
         <motion.p initial={{ x: -8 }} animate={{ x: [8, -6, 4, 0] }} className="mt-3 text-sm text-rose-400">
           {state.error}
